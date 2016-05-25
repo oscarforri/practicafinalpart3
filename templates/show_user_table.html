@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>Registered Users</title>
+  </head>
+  <body>
+    <h2>Registered users: </h2>
+    <table border="1">
+      <tr>
+        <th>Username</th>
+        <th>Userid</th>
+        <th>Email</th>
+        <th>Real Name</th>
+	<th>Amount</th>
+      </tr>
+        {% for row in data %}
+          <tr>
+            {% for cell in row %}
+            <td> {{cell}} </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+    </table>
+    <ul><a href="/">Back to Home Page.</a></ul>
+  </body>
+</html>
