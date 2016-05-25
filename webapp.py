@@ -28,7 +28,30 @@ def delete_user():
 def update_user():
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
-    ses
+    session = DBSesion()
+
+
+
+def get_keg():
+    engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    data = session.query(Keg.kegid, Keg.amount).all()
+    return data
+
+def save_keg(kegid, amount):
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    ed_keg = User(kegid, amount)
+    session.add(ed_keg)
+    session.commit()
+
+def delete_keg():
+    pass
+    
+def update_keg():
+    pass
 
 
 
