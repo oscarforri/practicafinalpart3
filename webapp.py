@@ -7,21 +7,21 @@ from sqlalchemy_declarative import User, Base
 
 app = Flask(__name__)
 
-def get_user():  //Retorna tots 
+def get_user():  #Retorna tots els usuaris i TOTA la seva informacio 
     engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     data = session.query(User.username, User.userid, User.email, User.realname, User.amount).all()
     return data
 
-def get_amount():
+def get_amount(): #Retorna els usuaris i el amount
     engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     data = session.query(User.username, User.amount).all()
     return data
 
-def save_user(username, userid, realname, email):
+def save_user(username, userid, realname, email): #Crear usuari
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
@@ -29,7 +29,7 @@ def save_user(username, userid, realname, email):
     session.add(ed_user)
     session.commit()
 
-def delete_user():
+def delete_user(username): #Esborrar usuari
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
@@ -37,7 +37,7 @@ def delete_user():
     session.delete(ed_user)
     session.commit()
 
-def update_user(username, userid, realname, email, amount):
+def update_user(username, userid, realname, email, amount): #Actualitzar usuari
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSesion()
@@ -93,22 +93,35 @@ def create_user():
 	email = request.form.get('email')
 	save_user(username, userid, realname, email)
 	return 'OK'
+	#Afegir user registered correctly / error
 
 #Gestio d'usuaris (DELETE).
 @app.route('/users_management/delete_user', methods=['GET','POST'])
 def delete_user():
+    data = #get ??
     if request.method == 'GET':
-	 return render_template('delete_user.html')
+	return render_template('delete_user.html',data = data)
     elif request.method == 'POST':
-	 return "Delete user correctly?"
+	username = request.form.get('username')
+	delete_user(username)
+	return "Delete user correctly?"
+	#Afegir user deleted correctly or error!!!	
 
 #Gestio d'usuaris (UPDATE).
 @app.route('/users_management/update_user', methods=['GET','POST'])
 def update_user():
+    data = #get  ????
     if request.method == 'GET':
-	return render_template('update_user.html')
+	return render_template('update_user.html', data=data)
     elif request.method == 'POST':
+ 	username = request.form.get('username')
+	userid = request.form.get('userid')
+	realname = request.form.get('realname')
+	email = request.form.get('email')
+	amount = request.form.get('amount')
+	update_user(username, userid, realname, email, amount)
 	return "Update user correctly?"
+	#Afegir correctly/error
 
 #Mostrar tots els usuaris i els amounts.
 @app.route('/show_users')
