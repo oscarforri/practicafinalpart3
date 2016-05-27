@@ -98,7 +98,7 @@ def create_user():
 #Gestio d'usuaris (DELETE).
 @app.route('/users_management/delete_user', methods=['GET','POST'])
 def delete_user():
-    data = #get ??
+#    data = #get ??
     if request.method == 'GET':
 	return render_template('delete_user.html',data = data)
     elif request.method == 'POST':
@@ -110,7 +110,7 @@ def delete_user():
 #Gestio d'usuaris (UPDATE).
 @app.route('/users_management/update_user', methods=['GET','POST'])
 def update_user():
-    data = #get  ????
+ #   data = #get  ????
     if request.method == 'GET':
 	return render_template('update_user.html', data=data)
     elif request.method == 'POST':
@@ -129,23 +129,15 @@ def show_users():
     data = get_amount()
     return render_template('show_user_table.html', data=data)
 
-
-#
-@app.route('/show')
-def show():
-    data = get_user()
-    if request.method == 'GET':
-	show = []
-    elif request.method == 'POST':
-	zone = request.form.get('username')
-	show = get_user(zone)
-    return render_template('show_user.html', show=show)
-
-
 #Gestio de surtidors
 @app.route('/kegs_management')
 def kegs_management():
     return render_temp
+
+
+
+
+
 
 
 if __name__ == '__main__':
