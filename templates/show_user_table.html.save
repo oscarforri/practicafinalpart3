@@ -1,20 +1,24 @@
 <html>
   <head>
-    <title>Ranking Table</title>
+    <title>Registered Users</title>
   </head>
   <body>
-    <h2>Ranking Table: </h2>
+    <h2>Registered users: </h2>
     <table border="1">
       <tr>
         <th>Username</th>
-        <th>Amount</th>
+        <th>Userid</th>
+        <th>Password</th>
+	<th>Amount</th>
+	<th>d</th>
       </tr>
         {% for row in data %}
           <tr>
-	    <td><a href="/show_user_table/{{row[0]}}">{{row[0]}}</a></td>
-            <td> {{row[1]}} </td>
+            {% for cell in row %}
+            <td> {{cell}} </td>
             {% endfor %}
           </tr>
+        {% endfor %}
     </table>
     <ul><a href="/">Back to Home Page.</a></ul>
   </body>

@@ -14,6 +14,13 @@ def get_user():
     data = session.query(User.username, User.userid, User.email, User.realname, User.amount).all()
     return data
 
+def get_amount():
+    engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    data = session.query(User.username, User.amount).all()
+    return data
+
 def save_user(username, userid, realname, email):
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
@@ -23,14 +30,23 @@ def save_user(username, userid, realname, email):
     session.commit()
 
 def delete_user():
-    pass
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    ed_user = session.query(User).filter_by(username=username).one()
+    session.delete(ed_user)
+    session.commit()
 
-def update_user():
+def update_user(username, userid, realname, email, amount):
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSesion()
-
-
+    ed_user = session.query(User).filter_by(username_username).one()
+    ed_user.userid = userid
+    ed_user.realname = realname
+    ed_user.email = email
+    ed_user.amount = amount
+    session.commit()
 
 def get_keg():
     engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
@@ -94,21 +110,29 @@ def update_user():
     elif request.method == 'POST':
 	return "Update user correctly?"
 
+#Mostrar tots els usuaris i els amounts.
+@app.route('/show_users')
+def show_users():
+    data = get_amount()
+    return render_template('show_user_table.html', data=data)
+
+
+#
+@app.route('/show')
+def show():
+    data = get_user()
+    if request.method == 'GET':
+	show = []
+    elif request.method == 'POST':
+	zone = request.form.get('username')
+	show = get_user(zone)
+    return render_template('show_user.html', show=show)
+
+
 #Gestio de surtidors
 @app.route('/kegs_management')
 def kegs_management():
-    return render_template('kegs_management.html')
-
-#Mostrar tots els usuaris.
-@app.route('/show_')
-def show_():
-    return "Mostrar tots els usuaris"
-
-#Mostrar tots els surtidors.
-@app.route('/show_users')
-def show_users():
-    data = get_user()
-    return render_template('show_user_table.html', data=data)
+    return render_temp
 
 
 if __name__ == '__main__':
