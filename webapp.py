@@ -7,7 +7,7 @@ from sqlalchemy_declarative import User, Base
 
 app = Flask(__name__)
 
-def get_user():
+def get_user():  //Retorna tots 
     engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
