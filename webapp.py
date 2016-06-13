@@ -115,10 +115,7 @@ def update_keg(kegid, amount): #Actualitzar Keg
     except:
 	return False
 
-
-
-
-def exist_keg():
+def exist_keg(kegid):
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
@@ -154,7 +151,7 @@ def index_ws():
 def index_wa():
     return render_template('index_wa.html')
 
-#####################__CREATE__########################################
+#####################__CREATE__############################
 
 #WebApp Gestio d'usuaris (CREATE).
 @app.route('/wa/create_user', methods=['GET','POST'])
@@ -190,49 +187,54 @@ def create_user_ws():
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     try:
-	ed_user = User(username=request.json['username'],userid=request.json['userid'],realname=request.json['realname'],email=request.json['email'], amount=0.0)
-	session.add(ed_user)
+	user = User(username=request.json['username'],userid=request.json['userid'],realname=request.json['realname'],email=request.json['email'], amount=0.0)
+	session.add(user)
 	session.commit()
     except:
 	abort(404)    
-    return jsonify(id=ed_user.id,username=ed_user.username,userid=ed_user.userid,realname=ed_user.realname,email=ed_user.email,amount=ed_user.amount)
+    return jsonify(id=user.id,username=user.username,userid=user.userid,realname=user.realname,email=user.email,amount=user.amount)
 
 #WebServer Gestio de kegs (CREATE).
 @app.route('/ws/kegs', methods=['POST'])
+def create_keg_ws():
+    if not request.json or not 'kegid' in request.json or not 'amount' in request.json:
+	abort(400)
+    if exist_keg(request.json['kegid']):
+	abort(400)
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try: 
+	keg = Keg(kegid=request.json['kegid'], amount=request.json['amount'])
+	session.add(keg)
+	session.commit()
+    except:
+	abort(404)
+    return jsonify(id=keg, kegid=keg.kegid, amount=keg.amount)
 
-
-###########################################################################
+###################__READ__################################
 
 #WebApp Gestio d'usuaris (READ).
-@app.route('/wa/show_users')
+@app.route('/wa/show_users') #Taula de usuaris
 def show_users_wa():
     data = get_amount()
     return render_template('show_user_table.html', data=data)
 
-@app.route('/wa/user/<username>', methods=['GET','POST'])
+@app.route('/wa/user/<username>', methods=['GET','POST']) #Update/Delete formulari
 def read_user_wa(username):
     data = get_user(username)
     return render_template('edit_user.html', data=data)
 
 #WebApp Gestio de kegs (READ).
-@app.route('/wa/show_kegs')
+@app.route('/wa/show_kegs') #Taula de kegs
 def show_kegs_wa():
     data = get_kegs()
     return render_template('show_keg_table.html', data=data)
 
-#@app.route('/wa/keg/<kegid>', methods=['GET','POST'])
-#def show_kegs_wa(kegid):
- #   data = get_keg(kegid)
-#    return render_template('edit_keg.html', data=data)
-
-@app.route('/wa/keg/<kegid>', methods=['GET', 'POST'])
+@app.route('/wa/keg/<kegid>', methods=['GET', 'POST'])  #Update/Delete formulari
 def show_keg_wa(kegid):
     data = get_keg(kegid)
     return render_template('edit_keg.html',data=data)
-
-
-
-
 
 #WebServer Gestio d'usuaris (READ).
 @app.route('/ws/users', methods=['GET'])  #READ ALL USER
@@ -243,7 +245,7 @@ def show_users_ws():
     users = session.query(User).all()
     all_users = [ user.__json__() for user in users]
     session.commit()
-    return jsonify({'users': all_users})
+    return jsonify({'users': users})
 
 @app.route('/ws/users/<username>', methods=['GET'])
 def show_user_ws(username):
