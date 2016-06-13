@@ -1,0 +1,19 @@
+<html>
+ <title>Update or Delete a registered user</title>
+
+    <h2>User to edit: {{data[0][0]}}</h2>
+    <form action="/wa/update_user" id="updateuser" method="post">
+      <input type="hidden" name="user_name" value="{{data[0][0]}}">
+      <p>Realname: <input type="text" name="realname" value="{{data[0][3]}}"></p>
+      <p>Userid: <input type="text" name="userid" value="{{data[0][1]}}"></p>
+      <p>Email: <input type="text" name="email" value="{{data[0][2]}}"></p>
+      <p>Amount: <input type="text" name="amount" value="{{data[0][4]}}"></p>
+      <input type="submit" value="Update" >
+    </form>
+
+    <form action="/wa/delete_user" id="deleteuser" method="post">
+      <input type="hidden" name="username" value="{{data[0][1]}}">
+      <input type="submit" value="Delete">
+    </form>
+<ul><a href="/">Back to Home Page.</a></ul>
+</html>
