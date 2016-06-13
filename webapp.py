@@ -1,5 +1,5 @@
 import sys
-from flask import Flask, request
+from flask import Flask, request, jsonify, abort, make_response
 from flask import render_template
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,6 +7,7 @@ from sqlalchemy_declarative import User, Base
 
 app = Flask(__name__)
 
+#USER functions:
 def get_user():  #Retorna tots els usuaris i TOTA la seva informacio 
     engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
     DBSession = sessionmaker(bind=engine)
@@ -41,13 +42,24 @@ def update_user(username, userid, realname, email, amount): #Actualitzar usuari
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSesion()
-    ed_user = session.query(User).filter_by(username_username).one()
+    ed_user = session.query(User).filter_by(username=username).one()
     ed_user.userid = userid
     ed_user.realname = realname
     ed_user.email = email
     ed_user.amount = amount
     session.commit()
 
+def exits_user(username):   #Comprovar si existeix l'usuari
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSesion()
+    try: 
+	ed_user = session.query(User).filter_by(username=username).one()
+        return True
+    except:
+	return False	
+
+#KEG functions:
 def get_keg():
     engine = create_engine('sqlite:///sqlalchemy_database.db', echo=True)
     DBSession = sessionmaker(bind=engine)
@@ -69,6 +81,17 @@ def delete_keg():
 def update_keg():
     pass
 
+def exits_keg(kegid):
+    pass
+
+#Error (JSON WebServices).
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({'error': 'Bad request'}), 400)
 
 
 #Home Page.
@@ -76,14 +99,20 @@ def update_keg():
 def index():
     return render_template('index.html')
 
-#Gestio d'usuaris.
-@app.route('/users_management')
-def users_management():
-    return render_template('users_management.html')
+#WebServer main page.
+@app.route('/ws')
+def index_ws(): 
+    return render_template('index_ws.html')
 
-#Gestio d'usuaris (CREATE).
-@app.route('/create_user', methods=['GET','POST'])
-def create_user():
+#WebApp main page. 
+@app.route('/wa')
+def index_wa():
+    return render_template('index_wa.html')
+
+
+#WebApp Gestio d'usuaris (CREATE).
+@app.route('/wa/create_user', methods=['GET','POST'])
+def create_user_wa():
     if request.method == 'GET':
         return render_template('create_user.html')
     elif request.method == 'POST':
@@ -95,8 +124,27 @@ def create_user():
 	return 'OK'
 	#Afegir user registered correctly / error
 
+#WebServer Gestio d'usuaris (CREATE).
+@app.route('/ws/create_user', methods=['POST'])
+def create_user_ws():
+    if not request.json or not 'username' in request.json or not 'userid' in request.json or not 'realname' in request.json or not 'email' in request.json:
+        abort(400)
+    if exits_user(request.json['username']):
+	abort(400)
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try:
+	ed_user = User(username=request.json['username'],userid=request.json['userid'],realname=request.json['realname'],email=request.json['email'], amount=0.0)
+	session.add(ed_user)
+	session.commit()
+    except:
+	abort(404)    
+    return jsonify(id=ed_user.id,username=ed_user.username,userid=ed_user.userid,realname=ed_user.realname,email=ed_user.email,amount=ed_user.amount)
+
+
 #Gestio d'usuaris (DELETE).
-@app.route('/users_management/delete_user', methods=['GET','POST'])
+@app.route('/wa/delete_user', methods=['GET','POST'])
 def delete_user():
 #    data = #get ??
     if request.method == 'GET':
@@ -108,7 +156,7 @@ def delete_user():
 	#Afegir user deleted correctly or error!!!	
 
 #Gestio d'usuaris (UPDATE).
-@app.route('/users_management/update_user', methods=['GET','POST'])
+@app.route('/wa/update_user', methods=['GET','POST'])
 def update_user():
  #   data = #get  ????
     if request.method == 'GET':
@@ -124,13 +172,13 @@ def update_user():
 	#Afegir correctly/error
 
 #Mostrar tots els usuaris i els amounts.
-@app.route('/show_users')
+@app.route('/wa/show_users')
 def show_users():
     data = get_amount()
     return render_template('show_user_table.html', data=data)
 
 #Gestio de surtidors
-@app.route('/kegs_management')
+@app.route('/wa/kegs_management')
 def kegs_management():
     return render_temp
 
