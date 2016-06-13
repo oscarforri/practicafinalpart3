@@ -19,14 +19,16 @@ def update_database(amount_recv, nfc_user_recv, num_keg_recv):
         ed_user = session.query(User).filter_by(userid = nfc_user_recv)
         try:
             ed_user = ed_user.one()
-            total_amount_user = float(ed_user.amount) + amount_recv
-            ed_user.amount = total_amount_user
-            session.commit()
         except:
             create_user = User(username = 'No Name', userid = nfc_user_recv, realname = 'No Name', email = 'No Email', amount = amount_recv)
             session.add(create_user)
             session.commit()
     
+        total_amount_user = float(ed_user.amount) + amount_recv
+        ed_user.amount = total_amount_user
+        session.commit()
+        
+        #The Keg id must be create before        
         ed_keg = session.query(Keg).filter_by(kegid = num_keg_recv).one()
         total_amount_keg = float(ed_keg.amount) + amount_recv
         ed_keg.amount = total_amount_keg

@@ -128,6 +128,8 @@ def exist_keg():
     except:
 	return False	
 
+####################################################################
+
 #Error (JSON WebServices).
 @app.errorhandler(404)
 def not_found(error):
@@ -136,7 +138,6 @@ def not_found(error):
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(jsonify({'error': 'Bad request'}), 400)
-
 
 #Home Page.
 @app.route('/')
@@ -153,7 +154,7 @@ def index_ws():
 def index_wa():
     return render_template('index_wa.html')
 
-####################################################################
+#####################__CREATE__########################################
 
 #WebApp Gestio d'usuaris (CREATE).
 @app.route('/wa/create_user', methods=['GET','POST'])
@@ -168,8 +169,6 @@ def create_user_wa():
 	save_user(username, userid, realname, email)
 	return render_template('create_correctly.html')
 
-	#Afegir user registered correctly / error
-
 #WebApp Gestio de kegs (CREATE).
 @app.route('/wa/create_keg',methods=['GET','POST'])
 def create_keg_wa():
@@ -179,10 +178,9 @@ def create_keg_wa():
 	kegid = request.form.get('kegid')
 	save_keg(kegid)
 	return render_template("create_correctly.html")
-#create erroor!!!!!
 
 #WebServer Gestio d'usuaris (CREATE).
-@app.route('/ws/create_user', methods=['POST'])
+@app.route('/ws/users', methods=['POST'])
 def create_user_ws():
     if not request.json or not 'username' in request.json or not 'userid' in request.json or not 'realname' in request.json or not 'email' in request.json:
         abort(400)
@@ -198,6 +196,10 @@ def create_user_ws():
     except:
 	abort(404)    
     return jsonify(id=ed_user.id,username=ed_user.username,userid=ed_user.userid,realname=ed_user.realname,email=ed_user.email,amount=ed_user.amount)
+
+#WebServer Gestio de kegs (CREATE).
+@app.route('/ws/kegs', methods=['POST'])
+
 
 ###########################################################################
 
