@@ -1,21 +1,20 @@
 <html>
   <head>
-    <title>Ranking Table</title>
+    <title>Keg Table</title>
   </head>
   <body>
-    <h2>Ranking Table: </h2>
+    <h2>Keg Table: </h2>
     <table border="1">
       <tr>
-        <th>Username</th>
+        <th>Keg id</th>
         <th>Amount</th>
       </tr>
         {% for row in data %}
           <tr>
-	    <td><a href="/wa/user/{{row[0]}}">{{row[0]}}</a></td>
+            <td><a href="/wa/keg/{{row[0]}}">{{row[0]}}</a></td>
             <td> {{row[1]}} </td>
             {% endfor %}
           </tr>
     </table>
     <ul><a href="/wa">Back to Home Page.</a></ul>
-  </body>
-</html>
+

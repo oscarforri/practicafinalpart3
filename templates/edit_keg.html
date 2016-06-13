@@ -1,0 +1,17 @@
+<html>
+ <title>Update or Delete a registered Keg</title>
+
+    <h2>Keg to edit: {{data[0][0]}}</h2>
+    <form action="/wa/update_keg" id="updatekeg" method="post">
+      <input type="hidden" name="kegid" value="{{data[0][0]}}">
+      <p>Amount: <input type="text" name="amount" value="{{data[0][1]}}"></p>
+      <input type="submit" value="Update" >
+    </form>
+
+    <form action="/wa/delete_keg" id="deletekeg" method="post">
+      <input type="hidden" name="kegid" value="{{data[0][0]}}">
+      <input type="submit" value="Delete">
+    </form>
+<ul><a href="/">Back to Home Page.</a></ul>
+</html>
+
