@@ -187,12 +187,12 @@ def create_user_ws():
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     try:
-	user = User(username=request.json['username'],userid=request.json['userid'],realname=request.json['realname'],email=request.json['email'], amount=0.0)
-	session.add(user)
+	ed_user = User(username=request.json['username'],userid=request.json['userid'],realname=request.json['realname'],email=request.json['email'], amount=0.0)
+	session.add(ed_user)
 	session.commit()
     except:
 	abort(404)    
-    return jsonify(id=user.id,username=user.username,userid=user.userid,realname=user.realname,email=user.email,amount=user.amount)
+    return jsonify(id=ed_user.id,username=ed_user.username,userid=ed_user.userid,realname=ed_user.realname,email=ed_user.email,amount=ed_user.amount)
 
 #WebServer Gestio de kegs (CREATE).
 @app.route('/ws/kegs', methods=['POST'])
@@ -205,12 +205,12 @@ def create_keg_ws():
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     try: 
-	keg = Keg(kegid=request.json['kegid'], amount=request.json['amount'])
-	session.add(keg)
+	ed_keg = Keg(kegid=request.json['kegid'], amount=request.json['amount'])
+	session.add(ed_keg)
 	session.commit()
     except:
 	abort(404)
-    return jsonify(id=keg, kegid=keg.kegid, amount=keg.amount)
+    return jsonify(id=ed_keg, kegid=ed_keg.kegid, amount=ed_keg.amount)
 
 ###################__READ__################################
 
