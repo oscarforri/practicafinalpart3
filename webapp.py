@@ -370,8 +370,6 @@ def delete_user_ws(username):
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     try:
-       # if not request.json:
-       #   abort(400)
         ed_user = session.query(User).filter_by(username=username).one()
         session.delete(ed_user)
         session.commit()
@@ -380,16 +378,14 @@ def delete_user_ws(username):
     return jsonify({'result': True})
 
 #WebServer Gestio de kegs (DELETE).
-@app.route('/ws/kegs/<kegid>', methods=['PUT'])
+@app.route('/ws/kegs/<kegid>', methods=['DELETE'])
 def delete_keg_ws(kegid):
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     try:
-        if not request.json:
-          abort(400)
         ed_keg = session.query(Keg).filter_by(kegid=kegid).one()
-        session.remove(ed_user)
+        session.delete(ed_keg)
         session.commit()
     except:
         abort(404)
