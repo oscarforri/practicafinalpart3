@@ -335,7 +335,7 @@ def update_keg_ws(kegid):
     session = DBSession()
     try:
         if not request.json:
-          abort(400)
+         abort(400)
     	ed_keg = session.query(Keg).filter_by(kegid=kegid).one()
     	ed_keg.amount = request.json['amount']
     	session.commit()
