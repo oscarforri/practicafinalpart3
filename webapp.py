@@ -373,13 +373,13 @@ def delete_user_ws(username):
        # if not request.json:
        #   abort(400)
         ed_user = session.query(User).filter_by(username=username).one()
-        session.remove(ed_user)
+        session.delete(ed_user)
         session.commit()
     except:
         abort(404)
     return jsonify({'result': True})
 
-#WebServer Gestio de kegs (UPDATE).
+#WebServer Gestio de kegs (DELETE).
 @app.route('/ws/kegs/<kegid>', methods=['PUT'])
 def delete_keg_ws(kegid):
     engine = create_engine('sqlite:///sqlalchemy_database.db')
