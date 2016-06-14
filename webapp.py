@@ -242,12 +242,12 @@ def show_users_ws():
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
-    users = session.query(User).all()
-    all_users = [ user.__json__() for user in users]
+    ed_user = session.query(User).all()
+    users=[ user.__json__() for user in ed_user]
     session.commit()
     return jsonify({'users': users})
 
-@app.route('/ws/users/<username>', methods=['GET'])
+@app.route('/ws/users/<username>', methods=['GET'])  #READ ONE USER
 def show_user_ws(username):
     engine = create_engine('sqlite:///sqlalchemy_database.db')
     DBSession = sessionmaker(bind=engine)
@@ -259,7 +259,31 @@ def show_user_ws(username):
         abort(404)
     return jsonify(id=ed_user.id,username=ed_user.username,userid=ed_user.userid,realname=ed_user.realname,email=ed_user.email,amount=ed_user.amount)
 
-########################################################################
+#WebServer Gestio de kegs (READ).
+@app.route('/ws/kegs', methods=['GET'])  #READ ALL KEGS
+def show_kegs_ws():
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    ed_keg = session.query(Keg).all()
+    kegs=[ keg.__json__() for keg in ed_keg]
+    session.commit()
+    return jsonify({'kegs': kegs})
+
+@app.route('/ws/kegs/<kegid>', methods=['GET']) #READ ONE KEG
+def show_keg_ws(kegid):
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try:
+        ed_keg = session.query(Keg).filter_by(kegid=kegid).one()
+        session.commit()
+    except:
+        abort(404)
+    return jsonify(id=ed_keg.id,kegid=ed_keg.kegid,amount=ed_keg.amount)
+
+
+########################__UPDATE__###########################
 
 #WebApp Gestio d'usuaris (UPDATE).
 @app.route('/wa/update_user', methods=['POST'])
@@ -285,10 +309,41 @@ def update_keg_wa():
 	  return render_template('update_error.html')
 
 #WebServer Gestio d'usuaris (UPDATE).
-#@app.route('/ws/user/', methods=['POST']
+@app.route('/ws/users/<username>', methods=['PUT'])
+def update_user_ws(username):
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try:
+	if not request.json:
+  	  abort(400)
+	ed_user = session.query(User).filter_by(username=username).one()
+    	ed_user.userid = request.json['userid']
+    	ed_user.realname = request.json['realname']
+    	ed_user.email = request.json['email']
+    	ed_user.amount = request.json['amount']
+    	session.commit()
+    except:
+	abort(404)
+    return jsonify(id=ed_user.id,username=ed_user.username,userid=ed_user.userid,realname=ed_user.realname,email=ed_user.email,amount=ed_user.amount)
 
+#WebServer Gestio de kegs (UPDATE).
+@app.route('/ws/kegs/<kegid>', methods=['PUT'])
+def update_keg_ws(kegid):
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try:
+        if not request.json:
+          abort(400)
+    	ed_keg = session.query(Keg).filter_by(kegid=kegid).one()
+    	ed_keg.amount = request.json['amount']
+    	session.commit()
+    except:
+        abort(404)
+    return jsonify(id=ed_keg.id,kegid=ed_keg.kegid,amount=ed_keg.amount)
 
-#########################################################################
+########################__DELETE__##########################
 
 #WebApp Gestio d'usuaris (DELETE).
 @app.route('/wa/delete_user', methods=['POST'])
@@ -299,7 +354,7 @@ def delete_user_wa():
     else:
 	return render_template('delete_error.html')
 
-#WebApp Gestio de kegs (DELET).
+#WebApp Gestio de kegs (DELETE).
 @app.route('/wa/delete_keg', methods=['POST'])
 def delete_keg_wa():
     kegid = request.form.get('kegid')
@@ -308,25 +363,39 @@ def delete_keg_wa():
     else:
         return render_template('delete_error.html')
 
+#WebServer Gestio d'usuaris (DELETE)
+@app.route('/ws/users/<username>', methods=['DELETE'])
+def delete_user_ws(username):
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try:
+       # if not request.json:
+       #   abort(400)
+        ed_user = session.query(User).filter_by(username=username).one()
+        session.remove(ed_user)
+        session.commit()
+    except:
+        abort(404)
+    return jsonify({'result': True})
 
+#WebServer Gestio de kegs (UPDATE).
+@app.route('/ws/kegs/<kegid>', methods=['PUT'])
+def delete_keg_ws(kegid):
+    engine = create_engine('sqlite:///sqlalchemy_database.db')
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    try:
+        if not request.json:
+          abort(400)
+        ed_keg = session.query(Keg).filter_by(kegid=kegid).one()
+        session.remove(ed_user)
+        session.commit()
+    except:
+        abort(404)
+    return jsonify({'result': True})
 
-########################################################################
-
-
-
-
-
-
-#Gestio de surtidors
-@app.route('/wa/kegs_management')
-def kegs_management():
-    return render_temp
-
-
-
-
-
-
+#####################################################################
 
 if __name__ == '__main__':
     app.debug = True
